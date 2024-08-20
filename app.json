@@ -1,0 +1,42 @@
+{
+    "apiVersion": "argoproj.io/v1alpha1",
+    "kind": "Application",
+    "metadata": {
+        "annotations": {
+            "argocd.argoproj.io/refresh": "normal"
+        },
+        "creationTimestamp": "2024-08-21T15:53:20Z",
+        "deletionGracePeriodSeconds": 0,
+        "deletionTimestamp": "2024-08-21T15:55:02Z",
+        "generation": 3,
+        "name": "apps-test",
+        "namespace": "argocd",
+        "resourceVersion": "168008",
+        "uid": "6eaa88ae-ff01-403e-bb92-5080539cb092"
+    },
+    "spec": {
+        "destination": {
+            "namespace": "argocd",
+            "server": "https://kubernetes.default.svc"
+        },
+        "project": "sians-test",
+        "source": {
+            "path": "apps/sians-test",
+            "repoURL": "https://github.com/pyroman30/job2",
+            "targetRevision": "main"
+        }
+    },
+    "status": {
+        "health": {},
+        "summary": {},
+        "sync": {
+            "comparedTo": {
+                "destination": {},
+                "source": {
+                    "repoURL": ""
+                }
+            },
+            "status": ""
+        }
+    }
+}
