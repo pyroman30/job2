@@ -128,7 +128,7 @@ fs_backend_proxy:
     repository: "alfa-registry.com"
     tag: "4b88fb02"
     pullPolicy:
-  replicaCount: 2
+  replicaCount: 4
   env:
     KEYCLOAK_AUTH_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/auth"
     KEYCLOAK_TOKEN_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/token"
