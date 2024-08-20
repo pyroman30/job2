@@ -6,11 +6,11 @@ metadata:
 spec:
   destination:
     namespace: fs-test1
-    server: {{ .Values.spec.destination.server }}
+    server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: {{ .Values.spec.source.repoURL }}
-    targetRevision: {{ .Values.spec.source.targetRevision }}
+    repoURL: https://github.com/pyroman30/job2
+    targetRevision: main
     path: fs-platform
     helm:
       valueFiles:
