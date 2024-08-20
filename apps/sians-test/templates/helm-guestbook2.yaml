@@ -8,11 +8,11 @@ metadata:
 spec:
   destination:
     namespace: helm-guestbook2
-    server: https://kubernetes.default.svc
+    server: {{ .Values.spec.destination.server }}
   project: default
   source:
-    repoURL:  https://github.com/pyroman30/job2
-    targetRevision: HEAD
+    repoURL: {{ .Values.spec.source.repoURL }}
+    targetRevision: {{ .Values.spec.source.targetRevision }}
     path: helm-guestbook
     helm:
       valueFiles:
