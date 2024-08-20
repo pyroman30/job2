@@ -15,5 +15,14 @@ spec:
     repoURL:  https://github.com/pyroman30/job2
     targetRevision: HEAD
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true
+    retry:
+      limit: -1
+      backoff:
+        duration: 60s
+        factor: 1
+        maxDuration: 60s
