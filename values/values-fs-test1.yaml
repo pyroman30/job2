@@ -65,7 +65,7 @@ fs_backend_api_dev:
     memory: 1Gi
   requests:
     cpu: 50m
-    memory: 500MiB
+    memory: 500Mi
 
 # fs_backend_api_prod
 fs_backend_api_prod:
@@ -118,7 +118,7 @@ fs_backend_api_prod:
     memory: 1Gi
   requests:
     cpu: 50m
-    memory: 500MiB
+    memory: 500Mi
 
 
 # fs_backend_proxy
@@ -176,7 +176,7 @@ fs_backend_proxy:
     memory: 1Gi
   requests:
     cpu: 50m
-    memory: 500MiB
+    memory: 500Mi
 
 
 # fs_datamart_backend
@@ -227,7 +227,7 @@ fs_datamart_backend:
     memory: 1Gi
   requests:
     cpu: 200m
-    memory: 500MiB
+    memory: 500Mi
 
 # fs_file_manager
 fs_file_manager:
@@ -271,8 +271,7 @@ fs_file_manager:
     memory: 200MiB
   requests:
     cpu: 50m
-    memory: 100MiB
-
+    memory: 100Mi
 
 # fs_general_api
 fs_general_api:
@@ -390,7 +389,7 @@ fs_git_manager:
     memory: 1Gi
   requests:
     cpu: 200m
-    memory: 500MiB
+    memory: 500Mi
 
 # fs_jira_manager
 fs_jira_manager:
@@ -430,10 +429,10 @@ fs_jira_manager:
     failureThreshold: 3
   limits:
     cpu: 100m
-    memory: 500MiB
+    memory: 500Mi
   requests:
     cpu: 50m
-    memory: 200MiB
+    memory: 200Mi
 
 # fs_mail_manager
 fs_mail_manager:
@@ -471,10 +470,10 @@ fs_mail_manager:
     failureThreshold: 3
   limits:
     cpu: 100m
-    memory: 500MiB
+    memory: 500Mi
   requests:
     cpu: 50m
-    memory: 200MiB
+    memory: 200Mi
 
 # fs_metric_manager
 fs_metric_manager:
@@ -517,10 +516,10 @@ fs_metric_manager:
     failureThreshold: 3
   limits:
     cpu: 100m
-    memory: 500MiB
+    memory: 500Mi
   requests:
     cpu: 50m
-    memory: 200MiB
+    memory: 200Mi
 
 # fs_model_manager
 fs_model_manager:
@@ -585,10 +584,10 @@ fs_model_manager:
     failureThreshold: 3
   limits:
     cpu: 500m
-    memory: 500MiB
+    memory: 500Mi
   requests:
     cpu: 100m
-    memory: 200MiB
+    memory: 200Mi
 
 # fs_registry_ui
 fs_registry_ui:
@@ -668,7 +667,7 @@ fs_registry_api_dev:
     memory: 1Gi
   requests:
     cpu: 100m
-    memory: 500MiB
+    memory: 500Mi
 
 # fs_registry_api_prod
 fs_registry_api_prod:
@@ -709,4 +708,4 @@ fs_registry_api_prod:
     memory: 1Gi
   requests:
     cpu: 100m
-    memory: 500MiB
+    memory: 500Mi
