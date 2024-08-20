@@ -14,7 +14,7 @@ spec:
     path: fs-platform
     helm:
       valueFiles:
-        - ../values/values-test1.yaml
+        - ../values/values-fs-test1.yaml
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
