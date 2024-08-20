@@ -16,7 +16,7 @@ spec:
     path: helm-guestbook
     helm:
       valueFiles:
-        - values/values1.yaml
+        - ../values/values1.yaml
   syncPolicy:
     automated:
       prune: true
