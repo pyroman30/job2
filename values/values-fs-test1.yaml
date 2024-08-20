@@ -669,7 +669,7 @@ fs_registry_api_dev:
     cpu: 100m
     memory: 500Mi
 
-# fs_registry_api_prod
+# f_registry_api_prod
 fs_registry_api_prod:
   enabled: true
   image:
