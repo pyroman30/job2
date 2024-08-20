@@ -9,7 +9,7 @@ spec:
   destination:
     namespace: helm-guestbook2
     server: {{ .Values.spec.destination.server }}
-  project: default
+  project: sians-test
   source:
     repoURL: {{ .Values.spec.source.repoURL }}
     targetRevision: {{ .Values.spec.source.targetRevision }}
