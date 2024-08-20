@@ -1,0 +1,11 @@
+{{ if or (not (hasKey $.Values.fs_mail_manager "enabled")) (eq (coalesce $.Values.fs_mail_manager.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-mail-manager-config
+data:
+{{- if $.Values.fs_mail_manager.env }}
+{{- toYaml $.Values.fs_mail_manager.env | nindent 2 }}
+{{- end }}
+{{- end }}
+

@@ -1,0 +1,47 @@
+{{ if or (not (hasKey $.Values.fs_backend_proxy "enabled")) (eq (coalesce $.Values.fs_backend_proxy.enabled false) true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs-backend-proxy
+  namespace: {{ $.Values.settings.namespace }}
+  labels:
+    app: fs-backend-proxy
+spec:
+  replicas: {{ .Values.fs_backend_proxy.replicaCount }}
+  selector:
+    matchLabels:
+      app: fs-backend-proxy
+  template:
+    metadata:
+      annotations:
+      {{- if $.Values.fs_backend_proxy.env }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/fs-backend-proxy/configmap.yaml") . | sha256sum | quote }}
+      {{- end }}
+      
+      labels:
+        app: fs-backend-proxy
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ $.Values.fs_backend_proxy.image.repository }}:{{ $.Values.fs_backend_proxy.image.tag }}
+        imagePullPolicy: {{ .Values.fs_backend_proxy.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+        envFrom:
+        {{- if $.Values.fs_backend_proxy.env }}
+        - configMapRef:
+            name: fs-backend-proxy-config
+        {{- end }}
+        
+        - secretRef:
+            name: fs-backend-proxy-secret
+       
+        resources:
+          requests:
+            {{- toYaml $.Values.fs_backend_proxy.requests | nindent 12 }}
+          limits:
+            {{- toYaml $.Values.fs_backend_proxy.limits | nindent 12 }}
+        {{- if $.Values.fs_backend_proxy.livenessProbe }}
+        {{- end }}
+{{- end }}
+

@@ -1,0 +1,14 @@
+{{ if or (not (hasKey $.Values.fs_datamart_backend "enabled")) (eq (coalesce $.Values.fs_datamart_backend.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-datamart-backend-config
+data:
+{{- if $.Values.settings.env }}
+{{- toYaml $.Values.settings.env | nindent 2 }}
+{{- end }}
+{{- if $.Values.fs_datamart_backend.env }}
+{{- toYaml $.Values.fs_datamart_backend.env | nindent 2 }}
+{{- end }}
+{{- end }}
+

@@ -1,0 +1,12 @@
+{{ if or (not (hasKey $.Values.fs_registry_ui "enabled")) (eq (coalesce $.Values.fs_registry_ui.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-registry-ui-config
+data:
+{{- if $.Values.fs_registry_ui.env }}
+{{- toYaml $.Values.fs_registry_ui.env | nindent 2 }}
+{{- end }}
+{{- end }}
+
+

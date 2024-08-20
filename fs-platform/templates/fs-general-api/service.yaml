@@ -1,0 +1,17 @@
+{{ if or (not (hasKey $.Values.fs_general_api "enabled")) (eq (coalesce $.Values.fs_general_api.enabled false) true) }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: fs-general-api
+  labels:
+    app: fs-general-api
+spec:
+  type: {{ $.Values.fs_general_api.service.type | default "ClusterIP" | quote }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ $.Values.fs_general_api.service.port }}
+    targetPort: {{ $.Values.fs_general_api.service.targetport }}
+  selector:
+    app: fs-general-api
+{{- end }}

@@ -1,0 +1,17 @@
+{{ if or (not (hasKey .Values.fs_registry_ui "enabled")) (eq (coalesce .Values.fs_registry_ui.enabled false) true) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: fs-registry-ui
+  labels:
+    app: fs-registry-ui
+spec:
+  type: {{ $.Values.fs_registry_ui.service.type | default "ClusterIP" | quote }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ $.Values.fs_registry_ui.service.port }}
+      targetPort: {{ $.Values.fs_registry_ui.service.targetport }}
+  selector:
+    app: fs-registry-ui
+{{- end }}
