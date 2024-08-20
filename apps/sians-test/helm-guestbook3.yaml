@@ -11,11 +11,12 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: helm-guestbook
     repoURL:  https://github.com/pyroman30/job2
     targetRevision: HEAD
-    
-
+    path: helm-guestbook
+    helm:
+      valueFiles:
+        - values/values1.yaml
   syncPolicy:
     automated:
       prune: true
