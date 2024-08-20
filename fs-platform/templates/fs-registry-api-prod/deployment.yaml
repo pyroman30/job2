@@ -1,0 +1,58 @@
+{{- if and (hasKey .Values "fs_registry_api_prod") (eq .Values.fs_registry_api_prod.enabled true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs-registry-api-prod
+  namespace: {{ $.Values.settings.namespace }}
+  labels:
+    app: fs-registry-api-prod
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: fs-registry-api-prod
+  template:
+    metadata:
+      annotations:
+      {{- if $.Values.fs_registry_api_prod.env }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/fs-registry-api-prod/configmap.yaml") . | sha256sum | quote }}
+      {{- end }}
+      
+      labels:
+        app: fs-registry-api-prod
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ $.Values.fs_registry_api_prod.image.repository }}:{{ $.Values.fs_registry_api_prod.image.tag }}
+        imagePullPolicy: {{ .Values.fs_registry_api_prod.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        envFrom:
+        {{- if $.Values.fs_registry_api_prod.env }}
+        - configMapRef:
+            name: fs-registry-api-prod-config
+        {{- end }}
+        
+        - secretRef:
+            name: fs-registry-api-prod-secret
+        
+        resources:
+          requests:
+            {{- toYaml $.Values.fs_registry_api_prod.requests | nindent 12 }}
+          limits:
+            {{- toYaml $.Values.fs_registry_api_prod.limits | nindent 12 }}
+        {{- if $.Values.fs_registry_api_prod.livenessProbe }}
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 80
+            {{- toYaml $.Values.fs_registry_api_prod.livenessProbe | nindent 10 }}
+        {{- end }}
+        {{- if $.Values.fs_registry_api_prod.readinessProbe }}
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 80
+            {{- toYaml $.Values.fs_registry_api_prod.readinessProbe | nindent 10 }}
+        {{- end }}
+{{- end }}

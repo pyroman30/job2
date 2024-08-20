@@ -1,0 +1,11 @@
+{{ if or (not (hasKey $.Values.fs_backend_api_prod "enabled")) (eq (coalesce $.Values.fs_backend_api_prod.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-backend-api-prod-config
+data:
+{{- if $.Values.fs_backend_api_prod.env }}
+{{- toYaml $.Values.fs_backend_api_prod.env | nindent 2 }}
+{{- end }}
+{{- end }}
+

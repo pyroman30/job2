@@ -1,0 +1,59 @@
+{{ if or (not (hasKey $.Values.fs_mail_manager "enabled")) (eq (coalesce $.Values.fs_mail_manager.enabled false) true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs-mail-manager
+  namespace: {{ $.Values.settings.namespace }}
+  labels:
+    app: fs-mail-manager
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: fs-mail-manager
+  template:
+    metadata:
+      annotations:
+      {{- if $.Values.fs_mail_manager.env }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/fs-mail-manager/configmap.yaml") . | sha256sum | quote }}
+      {{- end }}
+      
+      labels:
+        app: fs-mail-manager
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ $.Values.fs_mail_manager.image.repository }}:{{ $.Values.fs_mail_manager.image.tag }}
+        imagePullPolicy: {{ .Values.fs_mail_manager.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        envFrom:
+        {{- if $.Values.fs_mail_manager.env }}
+        - configMapRef:
+            name: fs-mail-manager-config
+        {{- end }}
+        
+        - secretRef:
+            name: fs-mail-manager-secret
+        
+        resources:
+          requests:
+            {{- toYaml $.Values.fs_mail_manager.requests | nindent 12 }}
+          limits:
+            {{- toYaml $.Values.fs_mail_manager.limits | nindent 12 }}
+        {{- if $.Values.fs_mail_manager.livenessProbe }}
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8000
+            {{- toYaml $.Values.fs_mail_manager.livenessProbe | nindent 10 }}
+        {{- end }}
+        {{- if $.Values.fs_mail_manager.readinessProbe }}
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8000
+            {{- toYaml $.Values.fs_mail_manager.readinessProbe | nindent 10 }}
+        {{- end }}
+{{- end }}
+

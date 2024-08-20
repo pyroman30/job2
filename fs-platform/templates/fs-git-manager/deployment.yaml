@@ -1,0 +1,59 @@
+{{ if or (not (hasKey $.Values.fs_git_manager "enabled")) (eq (coalesce $.Values.fs_git_manager.enabled false) true) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs-git-manager
+  namespace: {{ $.Values.settings.namespace }}
+  labels:
+    app: fs-git-manager
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: fs-git-manager
+  template:
+    metadata:
+      annotations:
+      {{- if $.Values.fs_git_manager.env }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/fs-git-manager/configmap.yaml") . | sha256sum | quote }}
+      {{- end }}
+      
+      labels:
+        app: fs-git-manager
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ $.Values.fs_git_manager.image.repository }}:{{ $.Values.fs_git_manager.image.tag }}
+        imagePullPolicy: {{ .Values.fs_git_manager.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        envFrom:
+        {{- if $.Values.fs_git_manager.env }}
+        - configMapRef:
+            name: fs-git-manager-config
+        {{- end }}
+        
+        - secretRef:
+            name: fs-git-manager-secret
+        
+        resources:
+          requests:
+            {{- toYaml $.Values.fs_git_manager.requests | nindent 12 }}
+          limits:
+            {{- toYaml $.Values.fs_git_manager.limits | nindent 12 }}
+        {{- if $.Values.fs_git_manager.livenessProbe }}
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8000
+            {{- toYaml $.Values.fs_git_manager.livenessProbe | nindent 10 }}
+        {{- end }}
+        {{- if $.Values.fs_git_manager.readinessProbe }}
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8000
+            {{- toYaml $.Values.fs_git_manager.readinessProbe | nindent 10 }}
+        {{- end }}
+{{- end }}
+

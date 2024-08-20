@@ -1,0 +1,11 @@
+{{ if or (not (hasKey $.Values.fs_file_manager "enabled")) (eq (coalesce $.Values.fs_file_manager.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-file-manager-config
+data:
+{{- if $.Values.fs_file_manager.env }}
+{{- toYaml $.Values.fs_file_manager.env | nindent 2 }}
+{{- end }}
+{{- end }}
+

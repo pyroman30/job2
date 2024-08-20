@@ -1,0 +1,6 @@
+spec:
+  source:
+    repoURL: https://git.moscow.alfaintra.net/scm/afm/featurestore.git
+    targetRevision: HEAD
+  destination:
+    server: sians-int

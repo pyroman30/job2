@@ -1,0 +1,11 @@
+{{ if or (not (hasKey $.Values.fs_jira_manager "enabled")) (eq (coalesce $.Values.fs_jira_manager.enabled false) true) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fs-jira-manager-config
+data:
+{{- if $.Values.fs_jira_manager.env }}
+{{- toYaml $.Values.fs_jira_manager.env | nindent 2 }}
+{{- end }}
+{{- end }}
+

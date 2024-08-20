@@ -1,0 +1,16 @@
+{{ if or (not (hasKey $.Values.fs_backend_proxy "enabled")) (eq (coalesce $.Values.fs_backend_proxy.enabled false) true) }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: fs-backend-proxy
+  labels:
+    app: fs-backend-proxy
+spec:
+  type: {{ $.Values.fs_backend_proxy.service.type | default "ClusterIP" | quote }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ $.Values.fs_backend_proxy.service.port }}
+  selector:
+    app: fs-backend-proxy
+{{- end }}

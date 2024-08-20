@@ -1,0 +1,17 @@
+{{ if or (not (hasKey $.Values.fs_model_manager "enabled")) (eq (coalesce $.Values.fs_model_manager.enabled false) true) }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: fs-model-manager
+  labels:
+    app: fs-model-manager
+spec:
+  type: {{ $.Values.fs_model_manager.service.type | default "ClusterIP" | quote }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ $.Values.fs_model_manager.service.port }}
+    targetPort: {{ $.Values.fs_model_manager.service.targetport }}
+  selector:
+    app: fs-model-manager
+{{- end }}

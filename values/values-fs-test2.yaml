@@ -1,0 +1,712 @@
+# some global settings
+
+settings:
+  registry:
+    username: "qwe"
+    password: "123"
+    domain: "alfa-registry.com"
+  namespace: "fs-test2"
+    
+
+# external dependency settings
+postgres:
+  enabled: false
+  auth:
+    enabled: false
+
+# fs_backend_api_dev
+fs_backend_api_dev:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: 86142932
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "registry_dev_2"
+    TYPE_DB: "dev"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    GENERAL_URI: "http://fs-general-api"
+    GIT_MANAGER_URI: "http://fs-git-manager"
+    USE_GIT_MANAGER: "true"
+    JIRA_URI: "https://jira.moscow.alfaintra.net/browse/"
+    GIT_URI_DEV: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_dev/browse/"
+    MODEL_MANAGER_URI: "http://fs-model-manager"
+    BACKEND_PROXY_URI: "http://fs-backend-proxy:8080"
+    KAFKA_TOPIC_POSTFIX: "-stand2"
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+  service:
+    name: fs-backend-api-dev
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# fs_backend_api_prod
+fs_backend_api_prod:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "58194ab2"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "registry_prod_2"
+    TYPE_DB: "dev"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    GENERAL_URI: "http://example.com"
+    GIT_MANAGER_URI: "http://fs-git-manager"
+    USE_GIT_MANAGER: "true"
+    JIRA_URI: "https://jira.moscow.alfaintra.net/browse/"
+    GIT_URI_DEV: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_prod/browse/"
+    MODEL_MANAGER_URI: "http://fs-model-manager"
+    BACKEND_PROXY_URI: "http://fs-backend-proxy:8080"
+    KAFKA_TOPIC_POSTFIX: "-stand2"
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+  service:
+    name: fs-backend-api-prod
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+
+# fs_backend_proxy
+fs_backend_proxy:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: 6e2470f2
+    pullPolicy:
+  replicaCount: 2
+  env:
+    KEYCLOAK_AUTH_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/auth"
+    KEYCLOAK_TOKEN_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/token"
+    KEYCLOAK_USER_INFO_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/userinfo"
+    KEYCLOAK_LOGOUT_URL: "https://idp.alfaintra.net/auth/realms/users/protocol/openid-connect/logout"
+    KEYCLOAK_REDIRECT_URI: "https://fs2-test2.dh.moscow.alfaintra.net/auth/keycloak_redirect"
+    AUTH_TYPE: "KEYCLOAK"
+    AUTH_USE_GROUPS: "True"
+    DB_SCHEMA: "users_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+  args:
+  - '--host=0.0.0.0'
+  - '--port=8080'
+  - '/dev:http://fs-backend-api-test-dev:80'
+  - '/prod:http://fs-backend-api-test-prod:80'
+  - '/general:http://fs-general-api:80'
+  - '/metric:http://fs-metric-manager:80'
+  - '/model_manager:http://fs-model-manager:80'
+  - '/file_manager:http://fs-file-manager:8000'
+  service:
+    name: fs-backend-proxy
+    type: ClusterIP
+    port: 8080
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 0.5
+    memory: 1Gi
+  requests:
+    cpu: 0.5
+    memory: 1Gi
+
+
+# fs_datamart_backend
+fs_datamart_backend:
+  enabled: false
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy:
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "public"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_prod"
+    DB_USER: "fs_metastore_prod"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    CACHE_UPDATE: "180"
+  virtualService:
+    web:
+      enabled: true
+      gateway: "mdp-gateway"
+      istio-namespace: "istio-ingress"
+      host: "datamartbackend.mdp.moscow.alfaintra.net"
+      path: "/"
+      port: "8000"
+  service:
+    name: fs-datamart-backend
+    type: ClusterIP
+    port: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# fs_file_manager
+fs_file_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy:
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "file_manager_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    CACHE_UPDATE: "180"
+    MINIO_S3_ENDPOINT_URL: "http://minio.minio-dh.svc.cluster.local"
+    MINIO_S3_BUCKET: "mmc"
+  service:
+    name: fs-file-manager
+    type: ClusterIP
+    port: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 2Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+
+
+# fs_general_api
+fs_general_api:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "general_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME_prod: "fs_metastore_test"
+    DB_USER_prod: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    BACKEND_URI_DEV: "http://fs-backend-api-dev:80"
+    BACKEND_URI_PROD: "http://fs-backend-api-prod:80"
+    METRIC_MANAGER_URI: "http://fs-metric-manager"
+    USE_METRIC_MANAGER: "True"
+    GIT_MANAGER_URI: "http://fs-git-manager"
+    USE_GIT_MANAGER: "True"
+    USE_GIT_MANAGER_FOR_DELETION: "True"
+    GIT_USERNAME: "tech_dpa_fs_atlassia"
+    GIT_REPO_DEV: "git.moscow.alfaintra.net/scm/afm/test_fs_repo_dev.git"
+    GIT_REPO_PROD: "git.moscow.alfaintra.net/scm/afm/test_fs_repo_prod.git"
+    GIT_URI_DEV: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_dev/browse/"
+    GIT_URI_PROD: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_prod/browse/"
+    JIRA_URI: "https://jira.moscow.alfaintra.net/browse/"
+    AIRFLOW_SSH_HOST_PROD: "10.230.89.3"
+    AIRFLOW_SSH_PORT_PROD: "22"
+    AIRFLOW_SSH_USERNAME_PROD: "airflow"
+    KAFKA_TOPIC_POSTFIX: ""
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+    MODEL_MANAGER_URI: "http://fs-model-manager"
+    PR_TARGET_PROJECT_REVIEWERS: "u_m1fz0, u_m1r2t"
+    PR_AGGREGATE_PROJECT_REVIEWERS: "u_m0ujz, u_m1dme, u_m18wr, u_m09v2, u_m1e6d, u_m1azt, u_m12wd, u_m1ahn, u_m1tlq, u_m1c2d"
+    PR_FEATURE_PROJECT_REVIEWERS: "u_m0ujz, u_m1dme, u_m18wr, u_m09v2, u_m1e6d, u_m1azt, u_m12wd, u_m1ahn, u_m1tlq, u_m1c2d"
+  service:
+    name: fs-general-api
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 300
+    periodSeconds: 300
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# fs_git_manager
+fs_git_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    GIT_USERNAME: "tech_dpa_fs_atlassia"
+    GIT_REPO_URL: "git.moscow.alfaintra.net/scm/afm/dummy_git_project.git"
+    GIT_CONN_PROTOCOL: "http"
+    GENERAL_URI: "http://fs-general-api"
+    GIT_REPO_DEV: "git.moscow.alfaintra.net/scm/afm/test_fs_repo_dev.git"
+    GIT_REPO_PROD: "git.moscow.alfaintra.net/scm/afm/test_fs_repo_prod.git"
+    GIT_URI_DEV: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_dev/browse/"
+    GIT_URI_PROD: "https://git.moscow.alfaintra.net/projects/AFM/repos/test_fs_repo_prod/browse/"
+    PRIMARY_BRANCH_DEV: "master"
+    PRIMARY_BRANCH_PROD: "master"
+    AIRFLOW_BRANCH: "airflow"
+    GIT_PROD_API_ENDPOINT: "https://git.moscow.alfaintra.net/rest/api/1.0/projects/{owner}/repos/{repo_slug}"
+    GIT_PROD_OWNER: "AFM"
+    GIT_PROD_REPO_SLUG: "test_fs_repo_prod"
+    KAFKA_TOPIC_POSTFIX: "-stand1"
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+    HANDLE_MODEL_ON_CREATE_EVENT_GM: "True"
+    HANDLE_LEGACY_MODEL_ON_UPGRADE_EVENT_GM: "True"
+    HANDLE_JIRA_TASK_ON_CREATE_EVENT_GM: "True"
+  service:
+    name: fs-git-manager
+    ype: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 0.5
+    memory: 1Gi
+  requests:
+    cpu: 0.5
+    memory: 1Gi
+
+# fs_jira_manager
+fs_jira_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    JIRA_MMS_LOGIN: "fs_atlassian"
+    KAFKA_TOPIC_POSTFIX: "-stand2"
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+    MLOPS_TEAMLEAD: "U_M1QCS"
+    HANDLE_MODEL_ON_CREATE_EVENT_JM: "True"
+    HANDLE_MODEL_ON_CHANGE_STATUS_EVENT_JM: "True"
+    HANDLE_MODEL_ON_CHANGE_DESCRIPTION_EVENT_JM: "True"
+    HANDLE_MODEL_ON_CHANGE_ASSIGNEE_EVENT_JM: "True"
+    HANDLE_LEGACY_MODEL_ON_UPGRADE_EVENT_JM: "True"
+  service:
+    name: fs-jira-manager
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 0.5
+    memory: 1Gi
+  requests:
+    cpu: 0.5
+    memory: 1Gi
+
+# fs_mail_manager
+fs_mail_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    FEATURESTORE_URI: "https://fs2-test2.dh.moscow.alfaintra.net"
+    MAILING_BOX: "fs_etl@alfabank.ru"
+    MAILING_BOX_LOGIN: "fs_etl"
+    SMTP: "gw.alfaintra.net"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+  service:
+    name: fs-mail-manager
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 0.1
+    memory: 1Gi
+  requests:
+    cpu: 0.1
+    memory: 1Gi
+
+# fs_metric_manager
+fs_metric_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "metric_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    CALCULATE_ALL_REPORTS: "True"
+    CALCULATE_ALL_REPORTS_INTERVAL_IN_MINUTES: "5"
+    BACKEND_URI_PROD: "http://fs-backend-api-prod:80"
+    LOGGING_SQL: "False"
+  service:
+    name: fs-metric-manager
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 0.5
+    memory: 1Gi
+  requests:
+    cpu: 0.5
+    memory: 1Gi
+
+# fs_model_manager
+fs_model_manager:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "models_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+    LOGGING_SQL: "False"
+    GIT_MANAGER_URI: "http://fs-git-manager"
+    BACKEND_PROXY_URI: "http://fs-backend-proxy:8080"
+    USE_GIT_MANAGER: "True"
+    USE_MAIL_MANAGER: "True"
+    JIRA_MANAGER_URI: "http://fs-jira-manager"
+    GENERAL_URI: "http://fs-general-api"
+    MLOPS_TEAMLEAD: "U_M1QCS"
+    UPDATE_BUILD_PIPELINES: "True"
+    JENKINS_LOGIN: "tech_mms"
+    JENKINS_TRAIN_LOGS_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_mlops-pipelines/job/ModelTrain"
+    JENKINS_INFERENCE_LOGS_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_mlops-pipelines/job/ModelInference"
+    JENKINS_TRAIN_AUTO_LOGS_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_automl-pipelines/job/ModelAutoTrain"
+    JENKINS_INFERENCE_AUTO_LOGS_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_automl-pipelines/job/ModelAutoInference"
+    JENKINS_MODEL_TRAIN_PIPE_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_mlops-pipelines/job/ModelTrain/buildWithParameters?delay=0sec"
+    JENKINS_MODEL_INFERENCE_PIPE_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_mlops-pipelines/job/ModelInference/buildWithParameters?delay=0sec"
+    JENKINS_WEBHOOK_URL: "https://featurestore.dh.moscow.alfaintra.net/v2/model/run/webhookUrl"
+    JENKINS_MODEL_AUTO_TRAIN_PIPE_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_automl-pipelines/job/ModelAutoTrain/buildWithParameters?delay=0sec"
+    JENKINS_MODEL_AUTO_INFERENCE_PIPE_URL: "https://jenkins.infra.moscow.alfaintra.net/job/mdp-prod_automl-pipelines/job/ModelAutoInference/buildWithParameters?delay=0sec"
+    MAIL_MANAGER_URI: "http://fs-mail-manager"
+    DOMAIN_MMS_ADDRESS: "fs2-test2.dh.moscow.alfaintra.net"
+    KAFKA_TOPIC_POSTFIX: "-stand2"
+    KAFKA_INSTANCE_ADDRESS: "kafka-fs-cluster-kafka-bootstrap.kafka.svc.cluster.local:9092"
+    KAFKA_AUTH_USER: "fs-user"
+    HANDLE_GIT_ON_CREATE_EVENT_MM: "True"
+    HANDLE_JIRA_ON_CREATE_EVENT_MM: "True"
+  service:
+    name: fs-model-manager
+    type: ClusterIP
+    port: 80
+    targetport: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+
+# fs_registry_ui
+fs_registry_ui:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    HOST: "k8s"
+    NODE_ENV: "stage"
+    AUTH_TYPE: "KEYCLOAK"
+    KEYCLOAK_URL: "https://idp.alfaintra.net"
+    KEYCLOAK_REALM: "users"
+    KEYCLOAK_REDIRECT_URL: "https://fs2-test2.dh.moscow.alfaintra.net/auth/keycloak_redirect"
+  service:
+    name: fs-registry-ui
+    type: ClusterIP
+    port: 8080
+    targetport: 80
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 1Gi
+
+# fs_registry_api_dev
+fs_registry_api_dev:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "registry_dev_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+  service:
+    name: fs-registry-api-dev
+    type: ClusterIP
+    port: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+# fs_registry_api_prod
+fs_registry_api_prod:
+  enabled: true
+  image:
+    repository: "alfa-registry.com"
+    tag: "131975fd"
+    pullPolicy: "Always"
+  replicaCount: 1
+  env:
+    DB_SCHEMA: "registry_prod_2"
+    DB_HOST: "dh-pg-1p"
+    DB_PORT: "10000"
+    DB_NAME: "fs_metastore_test"
+    DB_USER: "fs_metastore_test"
+    LOG_FORMAT: >- 
+      "%(asctime)s.%(msecs)03d [%(levelname)s] - %(name)s - %(funcName)s - %(lineno)s - %(message)s"
+    DATEFMT: "%Y-%m-%d %I:%M:%S"
+    LOG_LEVEL: INFO
+  service:
+    name: fs-registry-api-prod
+    type: ClusterIP
+    port: 8000
+  livenessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  readinessProbe:
+    initialDelaySeconds: 10
+    timeoutSeconds: 1
+    periodSeconds: 10
+    successThreshold: 1
+    failureThreshold: 3
+  limits:
+    cpu: 1
+    memory: 4Gi
+  requests:
+    cpu: 1
+    memory: 4Gi

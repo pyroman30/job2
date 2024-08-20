@@ -1,0 +1,16 @@
+{{ if or (not (hasKey $.Values.fs_datamart_backend "enabled")) (eq (coalesce $.Values.fs_datamart_backend.enabled false) true) }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: fs-datamart-backend
+  labels:
+    app: fs-datamart-backend
+spec:
+  type: {{ $.Values.fs_datamart_backend.service.type | default "ClusterIP" | quote }}
+  ports:
+  - name: http
+    protocol: TCP
+    port: {{ $.Values.fs_datamart_backend.service.port }}
+  selector:
+    app: fs-datamart-backend
+{{- end }}
