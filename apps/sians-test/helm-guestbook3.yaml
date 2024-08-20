@@ -14,9 +14,7 @@ spec:
     path: helm-guestbook
     repoURL:  https://github.com/pyroman30/job2
     targetRevision: HEAD
-    helm:
-      valuesFiles:
-        - ../values/values1.yaml
+    
 
   syncPolicy:
     automated:
