@@ -1,0 +1,6 @@
+spec:
+  source:
+    repoURL: https://github.com/pyroman30/job2
+    targetRevision: HEAD
+  destination:
+    server: in-cluster
