@@ -1,6 +1,6 @@
 {{ if or (not (hasKey $.Values.fs_backend_proxy "enabled")) (eq (coalesce $.Values.fs_backend_proxy.enabled false) true) }}
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
   name: fs-backend-proxy
   labels:
