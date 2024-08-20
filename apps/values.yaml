@@ -1,6 +1,6 @@
 spec:
   destination:
-    server: https://kubernetes.default.svc
+    server: 
   source:
-    repoURL: https://github.com/pyroman30/job2
-    targetRevision: HEAD
+    repoURL: 
+    targetRevision:
