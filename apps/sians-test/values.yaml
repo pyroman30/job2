@@ -1,6 +1,6 @@
 spec:
   source:
-    repoURL: https://git.moscow.alfaintra.net/scm/afm/featurestore.git
+    repoURL: https://github.com/pyroman30/job2
     targetRevision: HEAD
   destination:
-    server: sians-int
+    server: in-cluster

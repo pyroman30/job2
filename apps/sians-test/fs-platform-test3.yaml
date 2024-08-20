@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: {{ .Values.spec.source.repoURL }}
     targetRevision: {{ .Values.spec.source.targetRevision }}
-    path: Helmcharts/fs-platform
+    path: fs-platform
     helm:
       valueFiles:
         - ../values/values-test3.yaml
