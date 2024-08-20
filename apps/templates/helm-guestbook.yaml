@@ -16,4 +16,4 @@ spec:
     targetRevision: HEAD
   syncPolicy:
     syncOptions:
-      - CreateNamespace=tru
+      - CreateNamespace=true
