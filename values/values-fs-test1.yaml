@@ -268,7 +268,7 @@ fs_file_manager:
     failureThreshold: 3
   limits:
     cpu: 100m
-    memory: 200MiB
+    memory: 200Mi
   requests:
     cpu: 50m
     memory: 100Mi
