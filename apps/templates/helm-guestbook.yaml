@@ -9,7 +9,7 @@ spec:
   destination:
     namespace: helm-guestbook
     server: https://kubernetes.default.svc
-  project: default
+  project: sians-test
   source:
     path: helm-guestbook
     repoURL:  https://github.com/pyroman30/job2
