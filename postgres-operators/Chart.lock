@@ -1,0 +1,9 @@
+dependencies:
+- name: postgres-operator
+  repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+  version: 1.10.1
+- name: postgres-operator-ui
+  repository: https://opensource.zalando.com/postgres-operator/charts/postgres-operator-ui
+  version: 1.10.1
+digest: sha256:5946ffdf06b605a19098419006d9403211fb6f485792c11bda11d43ec5ff8e3c
+generated: "2023-12-11T14:08:00.885061+03:00"
