@@ -1,6 +1,6 @@
 postgresql:
   global:
-    storageClass: "longhorn"
+    storageClass: "local-path"
     postgresql:
       auth:
         postgresPassword: "featurestore"
